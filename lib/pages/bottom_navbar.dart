@@ -26,13 +26,13 @@ class _BottomNavbarState extends State<BottomNavbar> {
 
   @override
   Widget build(BuildContext context) {
-    final appBar;
+    final PreferredSizeWidget? appBar;
     if (Platform.isAndroid) {
       appBar = AppBar(title: const Text("foody"));
     } else if (Platform.isIOS) {
-      appBar = CupertinoNavigationBar(leading: const Text("foody"));
+      appBar = CupertinoNavigationBar(middle: const Text("foody"));
     } else {
-      appBar = SizedBox();
+      appBar = null;
     }
     return Scaffold(
       appBar: appBar,
