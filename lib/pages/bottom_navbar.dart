@@ -36,7 +36,6 @@ class _BottomNavbarState extends State<BottomNavbar> {
     }
     return Scaffold(
       appBar: appBar,
-      drawer: const Drawer(backgroundColor: Colors.white),
       backgroundColor: Colors.white,
       body: bodyOptions[selectedIndex],
       bottomNavigationBar: BottomNavigationBar(

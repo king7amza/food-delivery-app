@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fooddelivery/pages/food_details_page.dart';
 import '../models/food_model.dart';
 import '../widgets/food_grid_item.dart';
 
@@ -8,7 +9,8 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
-    final isLandScape = MediaQuery.of(context).orientation == Orientation.landscape;
+    final isLandScape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
@@ -29,11 +31,25 @@ class HomePage extends StatelessWidget {
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: food.length,
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: isLandScape? 4 : 2,
-                    mainAxisSpacing: isLandScape? size.height * 0.07 : size.height * 0.02,
-                    crossAxisSpacing: isLandScape? size.height * 0.07 : size.height * 0.02,
+                    crossAxisCount: isLandScape ? 4 : 2,
+                    mainAxisSpacing:
+                        isLandScape ? size.height * 0.07 : size.height * 0.02,
+                    crossAxisSpacing:
+                        isLandScape ? size.height * 0.07 : size.height * 0.02,
                   ),
-                  itemBuilder: (context, index) => FoodGridItem(foodIndex: index,),
+                  itemBuilder:
+                      (context, index) => InkWell(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return FoodDetailsPage(foodModel: food[index],);
+                              },
+                            ),
+                          );
+                        },
+                        child: FoodGridItem(foodIndex: index),
+                      ),
                 ),
               ),
             ],

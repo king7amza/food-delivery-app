@@ -1,8 +1,9 @@
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fooddelivery/models/food_model.dart';
+
+import 'food_details_page.dart';
 
 class FavoritesPage extends StatefulWidget {
   const FavoritesPage({super.key});
@@ -47,31 +48,51 @@ class _FavoritesPageState extends State<FavoritesPage> {
     } else if (Platform.isIOS) {
       return CupertinoButton(
         onPressed: onPressed,
-        child: isLandScape ? Row(
-          children: [
-            Icon(
-              CupertinoIcons.heart_fill,
-              color: Theme.of(context).primaryColor,
-              size: size.height * 0.13,
-            ),
-            SizedBox(width: 5,),
-            Text(
-              "Favorite",
-              style: TextStyle(
-                fontSize: size.height * 0.07,
-                color: Theme.of(context).primaryColor,
-              ),
-            ),
-          ],
-        ):Icon(
-          Icons.favorite,
-          color: Theme.of(context).primaryColor,
-          size: size.height * 0.04,
-        ),
+        child:
+            isLandScape
+                ? Row(
+                  children: [
+                    Icon(
+                      CupertinoIcons.heart_fill,
+                      color: Theme.of(context).primaryColor,
+                      size: size.height * 0.13,
+                    ),
+                    SizedBox(width: 5),
+                    Text(
+                      "Favorite",
+                      style: TextStyle(
+                        fontSize: size.height * 0.07,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                    ),
+                  ],
+                )
+                : Icon(
+                  Icons.favorite,
+                  color: Theme.of(context).primaryColor,
+                  size: size.height * 0.04,
+                ),
       );
     } else {
       return SizedBox();
     }
+  }
+
+  Widget buildAdaptiveResponsiveFavButton({
+    required List<FoodModel> favoriteFoodFilter,
+    required int index,
+  }) {
+    return adaptiveResponsiveFavButton(
+      context: context,
+      onPressed: () {
+        final targetedItem = favoriteFoodFilter[index];
+        int targetedIndex = food.indexOf(targetedItem);
+        setState(() {
+          food[targetedIndex] = food[targetedIndex].copyWith(isFavorite: false);
+          favoriteFoodFilter.remove(targetedItem);
+        });
+      },
+    );
   }
 
   @override
@@ -109,67 +130,69 @@ class _FavoritesPageState extends State<FavoritesPage> {
         ],
       );
     }
-
     return ListView.builder(
       itemCount: favoriteFoodFilter.length,
       itemBuilder:
-          (context, index) => Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Card(
-              color: Colors.grey[200],
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: [
-                    Image.network(
-                      favoriteFoodFilter[index].imageUrl,
-                      height:
-                          isLandScape ? size.height * 0.32 : size.height * 0.1,
-                      width: isLandScape ? size.width * 0.32 : size.width * 0.3,
-                      fit: BoxFit.contain,
-                    ),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            favoriteFoodFilter[index].name,
-                            style: TextStyle(
-                              fontSize:
-                                  isLandScape
-                                      ? size.height * 0.08
-                                      : size.height * 0.03,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
-                          ),
-                          Text(
-                            "${favoriteFoodFilter[index].price}\$",
-                            style: TextStyle(
-                              fontSize:
-                                  isLandScape
-                                      ? size.height * 0.08
-                                      : size.height * 0.03,
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(context).primaryColor,
-                            ),
-                          ),
-                        ],
+          (context, index) => InkWell(
+            onTap: (){
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) {
+                    return FoodDetailsPage(foodModel: favoriteFoodFilter[index],);
+                  },
+                ),
+              );
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Card(
+                color: Colors.grey[200],
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      Image.network(
+                        favoriteFoodFilter[index].imageUrl,
+                        height:
+                            isLandScape ? size.height * 0.32 : size.height * 0.1,
+                        width: isLandScape ? size.width * 0.32 : size.width * 0.3,
+                        fit: BoxFit.contain,
                       ),
-                    ),
-                    adaptiveResponsiveFavButton(
-                      context: context,
-                      onPressed: () {
-                        final targetedItem = favoriteFoodFilter[index];
-                        int targetedIndex = food.indexOf(targetedItem);
-                        setState(() {
-                          food[targetedIndex] = food[targetedIndex]
-                              .copyWith(isFavorite: false);
-                          favoriteFoodFilter.remove(targetedItem);
-                        });
-                      },
-                    ),
-                  ],
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              favoriteFoodFilter[index].name,
+                              style: TextStyle(
+                                fontSize:
+                                    isLandScape
+                                        ? size.height * 0.08
+                                        : size.height * 0.03,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                            Text(
+                              "${favoriteFoodFilter[index].price}\$",
+                              style: TextStyle(
+                                fontSize:
+                                    isLandScape
+                                        ? size.height * 0.08
+                                        : size.height * 0.03,
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).primaryColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      buildAdaptiveResponsiveFavButton(
+                        favoriteFoodFilter: favoriteFoodFilter,
+                        index: index,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
